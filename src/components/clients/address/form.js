@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'semantic-ui-react'
 
 const AddressForm = (props) => {
-    const [address, setAddress] = useState({});
+    const [address, setAddress] = useState({
+        type: "", streetName: "",
+        number: "", city: "", country: "", comments: ""
+    });
 
     function handleSubmit() {
         if (props.isUpdate) {
-            fetch(`https://localhost/api/clients/address/${props.clientId}`, {
+            fetch(`https://localhost/api/clients/address/${address.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(address),
                 headers: {
@@ -59,7 +62,17 @@ const AddressForm = (props) => {
     }
 
     useEffect(() => {
-        setAddress(props.addressToUpdate);
+        if (props.isUpdate) {
+            setAddress({
+                ...address, type: props.addressToUpdate.type,
+                streetName: props.addressToUpdate.streetName,
+                number: props.addressToUpdate.number,
+                city: props.addressToUpdate.city,
+                country: props.addressToUpdate.country,
+                comments: props.addressToUpdate.comments,
+                id: props.addressToUpdate.id
+            });
+        }
     }, []);
 
     return (
@@ -72,7 +85,7 @@ const AddressForm = (props) => {
                             fluid label="Type"
                             width={4}
                             onChange={handleChange}
-                            value={address ? address.type : ""}
+                            value={address.type}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -81,14 +94,14 @@ const AddressForm = (props) => {
                             fluid
                             label="Street Name"
                             onChange={handleChange}
-                            value={address? address.streetName : ""}
+                            value={address.streetName}
                         />
                         <Form.Input
                             name="number"
                             fluid
                             label='Number'
                             onChange={handleChange}
-                            value={address ? address.number : ""}
+                            value={address.number}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -96,13 +109,13 @@ const AddressForm = (props) => {
                             name="city"
                             fluid label="City"
                             onChange={handleChange}
-                            value={address ? address.city ? address.city : "" : ""}
+                            value={address.city}
                         />
                         <Form.Input
                             name="country"
                             fluid label='Country'
                             onChange={handleChange}
-                            value={address ? address.country ? address.country : "" : ""}
+                            value={address.country}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -111,7 +124,7 @@ const AddressForm = (props) => {
                             fluid
                             label="Comments"
                             onChange={handleChange}
-                            value={address ? address.comments ? address.comments : "" : ""}
+                            value={address.comments}
                         />
                     </Form.Group>
                     <Button

@@ -37,7 +37,7 @@ const ClientsTable = () => {
       <Header as="h1">Clients</Header>
       <div style={{ float: 'right', padding: 10 }}>
         <Button positive circular icon='refresh' onClick={() => getClients()} />
-        <AddNew />
+        <AddNew refreshTable = {() => getClients()} />
       </div>
       <Table celled selectable>
         <Table.Header>

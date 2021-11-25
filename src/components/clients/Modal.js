@@ -7,7 +7,7 @@ function AddNew(props) {
 
     return (
         <Modal
-            style = {{padding: 20}}
+            style={{ padding: 20 }}
             closeIcon
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
@@ -17,7 +17,10 @@ function AddNew(props) {
             <Modal.Header>Register client's information</Modal.Header>
             <Modal.Content>
                 <Modal.Description>
-                    <ClientForm closeModal = {() => setOpen(false)}></ClientForm>
+                    <ClientForm
+                        closeModal={() => setOpen(false)}
+                        refreshTable={props.refreshTable}
+                    />
                 </Modal.Description>
             </Modal.Content>
         </Modal>

@@ -70,7 +70,7 @@ const ClientSummary = (props) => {
                 console.error(error);
             })
         setOpenConfirmation(false);
-        history("/home");
+        history("/");
     }
 
     const ClientInfo = () => {
@@ -123,7 +123,7 @@ const ClientSummary = (props) => {
 
     return (
         <Container style={{ margin: 20 }}>
-            <Button color="orange" icon='home' onClick={() => history('/home')} />
+            <Button color="orange" icon='home' onClick={() => history('/')} />
             <Header as="h1">Edit Client's Profile{props.clientId}</Header>
             <ClientInfo></ClientInfo>
             <AddressesTable client={client} updateAddressTable={() => getClient()}></AddressesTable>
