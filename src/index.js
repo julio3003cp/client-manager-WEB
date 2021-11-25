@@ -4,11 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'semantic-ui-css/semantic.min.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ClientSummary from './components/clients/Edit';
 
 ReactDOM.render(
-  <React.StrictMode>
+  /* <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>, */
+  <BrowserRouter>
+    <Routes>
+      <Route path="/home" element={<App />}></Route>
+      <Route path="/edit" element={<ClientSummary />}>
+        <Route path=":clientId" element={<ClientSummary />} />
+      </Route>
+    </Routes>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 

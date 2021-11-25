@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'semantic-ui-react'
 import CreateNewClient from './Modal';
+import { useNavigate } from 'react-router-dom';
+
 
 const ClientsTable = () => {
   const [clients, setClients] = useState([]);
+  const history = useNavigate();
 
   useEffect(() => {
     getClients()
@@ -19,11 +22,14 @@ const ClientsTable = () => {
       })
       .then(data => {
         setClients(data);
-        console.log(data);
       })
       .catch(error => {
         console.error(error);
       })
+  }
+
+  function getClientId(e){
+    history(`/edit/${e.target.parentElement.id}`);
   }
 
   return (
@@ -47,11 +53,11 @@ const ClientsTable = () => {
           {
             clients.map(element => {
               return (
-                <Table.Row key={element.id}>
+                <Table.Row id = {element.clientId} key={element.clientId}  onClick = {(e) => getClientId(e)}>
                   <Table.Cell>{element.companyId}</Table.Cell>
                   <Table.Cell>{element.id}</Table.Cell>
                   <Table.Cell>{element.name}</Table.Cell>
-                  <Table.Cell>{element.lastName}</Table.Cell>
+                  <Table.Cell >{element.lastName}</Table.Cell>
                 </Table.Row>
               )
             })
