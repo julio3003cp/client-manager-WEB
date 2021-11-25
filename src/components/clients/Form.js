@@ -3,11 +3,11 @@ import { Button, Form } from 'semantic-ui-react'
 
 const ClientForm = (props) => {
 
-    const [client, saveClient] = useState({ companyId: 0, id: "", name: "", lastName: "" });
+    const [client, setClient] = useState({ companyId: 0, id: "", name: "", lastName: "" });
 
 
     function handleChange(e, { name, value }) {
-        saveClient({ ...client, [name]: value });
+        setClient({ ...client, [name]: value });
     }
 
     function handleSubmit() {

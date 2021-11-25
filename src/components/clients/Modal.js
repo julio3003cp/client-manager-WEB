@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Modal } from 'semantic-ui-react'
 import ClientForm from './Form';
 
-function CreateNewClient(props) {
+function AddNew(props) {
     const [open, setOpen] = React.useState(false)
 
     return (
@@ -24,4 +24,4 @@ function CreateNewClient(props) {
     )
 }
 
-export default CreateNewClient;
+export default AddNew;
