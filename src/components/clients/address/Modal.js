@@ -5,7 +5,7 @@ import AddressForm from './form';
 function AddNewAddress(props) {
     const [open, setOpen] = React.useState(false)
 
-    
+
     return (
         <Modal
             style={{ padding: 20 }}
@@ -13,7 +13,13 @@ function AddNewAddress(props) {
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
             open={open}
-            trigger={<Button primary circular icon='plus' onClick = {(e) => props.handleOnClickAddress(e)}/>}
+            trigger={
+                <Button
+                    primary
+                    circular
+                    icon={props.isUpdate ? "edit" : "plus"}
+                    onClick={(e) => props.handleOnClickAddress(e)}
+                />}
         >
             <Modal.Header>Add a new Address to this client</Modal.Header>
             <Modal.Content>
@@ -22,8 +28,8 @@ function AddNewAddress(props) {
                         closeModal={() => setOpen(false)}
                         clientId={props.clientId}
                         updateAddressTable={props.updateAddressTable}
-                        addressToUpdate = {props.addressToUpdate}
-                        isUpdate = {props.isUpdate}
+                        addressToUpdate={props.addressToUpdate}
+                        isUpdate={props.isUpdate}
                     />
                 </Modal.Description>
             </Modal.Content>

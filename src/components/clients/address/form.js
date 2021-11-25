@@ -5,28 +5,53 @@ const AddressForm = (props) => {
     const [address, setAddress] = useState({});
 
     function handleSubmit() {
-        fetch(`https://localhost/api/clients/address/${props.clientId}`, {
-            method: 'POST',
-            body: JSON.stringify(address),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(response => {
-                if (response.ok) {
-                    //return response.json();
-                    props.updateAddressTable();
-                    props.closeModal(true);
-                }
-                throw response;
+        if (props.isUpdate) {
+            fetch(`https://localhost/api/clients/address/${props.clientId}`, {
+                method: 'PUT',
+                body: JSON.stringify(address),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
             })
-            .then(data => {
-                //setClient(data);
-                setAddress(data);
+                .then(response => {
+                    if (response.ok) {
+                        //return response.json();
+                        props.updateAddressTable();
+                        props.closeModal(true);
+                    }
+                    throw response;
+                })
+                .then(data => {
+                    //setClient(data);
+                    setAddress(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        } else {
+            fetch(`https://localhost/api/clients/address/${props.clientId}`, {
+                method: 'POST',
+                body: JSON.stringify(address),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
             })
-            .catch(error => {
-                console.error(error);
-            })
+                .then(response => {
+                    if (response.ok) {
+                        //return response.json();
+                        props.updateAddressTable();
+                        props.closeModal(true);
+                    }
+                    throw response;
+                })
+                .then(data => {
+                    //setClient(data);
+                    setAddress(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+        }
     }
 
     function handleChange(e, { name, value }) {
@@ -34,8 +59,9 @@ const AddressForm = (props) => {
     }
 
     useEffect(() => {
-        console.log("Got this address: " + JSON.stringify(props.addressToUpdate));
+        setAddress(props.addressToUpdate);
     }, []);
+
     return (
         <>
             <div style={{ padding: 20 }}>
@@ -46,7 +72,7 @@ const AddressForm = (props) => {
                             fluid label="Type"
                             width={4}
                             onChange={handleChange}
-                            value={props.isUpdate ? props.addressToUpdate.type : ""}
+                            value={address ? address.type : ""}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -55,14 +81,14 @@ const AddressForm = (props) => {
                             fluid
                             label="Street Name"
                             onChange={handleChange}
-                            value={props.isUpdate ? props.addressToUpdate.streetName : ""}
+                            value={address? address.streetName : ""}
                         />
                         <Form.Input
                             name="number"
                             fluid
                             label='Number'
                             onChange={handleChange}
-                            value={props.isUpdate ? props.addressToUpdate.number : ""}
+                            value={address ? address.number : ""}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -70,13 +96,13 @@ const AddressForm = (props) => {
                             name="city"
                             fluid label="City"
                             onChange={handleChange}
-                            value={props.isUpdate ? props.addressToUpdate.city ? props.addressToUpdate.city : "" : ""}
+                            value={address ? address.city ? address.city : "" : ""}
                         />
                         <Form.Input
                             name="country"
                             fluid label='Country'
                             onChange={handleChange}
-                            value={props.isUpdate ? props.addressToUpdate.country ? props.addressToUpdate.country : "" : ""}
+                            value={address ? address.country ? address.country : "" : ""}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -85,7 +111,7 @@ const AddressForm = (props) => {
                             fluid
                             label="Comments"
                             onChange={handleChange}
-                            value={props.isUpdate ? props.addressToUpdate.comments ? props.addressToUpdate.comments : "" : ""}
+                            value={address ? address.comments ? address.comments : "" : ""}
                         />
                     </Form.Group>
                     <Button

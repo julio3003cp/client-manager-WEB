@@ -15,20 +15,10 @@ const AddressesTable = (props) => {
         if (invoker.includes("negative") || invoker.includes("remove")) {
             setOpenConfirmation(true);
         }
-        else {
-            handleUpdateAddress();
-        }
-
     }
 
     function handleDeleteCancel() {
         setOpenConfirmation(false);
-    }
-
-    function handleUpdateAddress() {
-        console.log(JSON.stringify(props.client.addresses));
-        console.log(addressId);
-        console.log(props.client.addresses.find(element => element.id.toString() === addressId));
     }
 
     function deleteAddress() {
@@ -62,6 +52,7 @@ const AddressesTable = (props) => {
                     clientId={props.client.clientId}
                     updateAddressTable={props.updateAddressTable}
                     isUpdate={false}
+                    handleOnClickAddress={(e) => handleOnClickAddress(e)}
                 />
             </div>
             <Table celled>
@@ -91,13 +82,11 @@ const AddressesTable = (props) => {
                                     <Table.Cell >{element.comments}</Table.Cell>
                                     <Table.Cell >
                                         <Button icon="remove" negative circular onClick={(e) => handleOnClickAddress(e)} />
-                                        {/* <Button icon="save" positive circular onClick={(e) => handleOnClickAddress(e)} /> */}
                                         <AddNewAddress
                                             clientId={props.client.clientId}
                                             updateAddressTable={props.updateAddressTable}
                                             addressToUpdate={props.client.addresses.find(element => element.id.toString() === addressId)}
-                                            //handleOnClickAddress={(e) => handleOnClickAddress(e)}
-                                            handleOnClickAddress = {(e) => handleOnClickAddress(e)}
+                                            handleOnClickAddress={(e) => handleOnClickAddress(e)}
                                             isUpdate={true}
                                         />
                                     </Table.Cell>
