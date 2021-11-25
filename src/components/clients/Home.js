@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Confirm, Header, Table } from 'semantic-ui-react'
+import { Button, Header, Table } from 'semantic-ui-react'
 import AddNew from './Modal';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const ClientsTable = () => {
   const [clients, setClients] = useState([]);
   const history = useNavigate();
-  const [openConfirmation, setOpenConfirmation] = useState(false);
 
   useEffect(() => {
     getClients()
@@ -33,20 +32,12 @@ const ClientsTable = () => {
     history(`/edit/${e.target.parentElement.id}`);
   }
 
-  function handleCancel(){
-    setOpenConfirmation(false);
-  }
-
-  function handleConfirm(){
-    setOpenConfirmation(false);
-  }
   return (
     <>
       <Header as="h1">Clients</Header>
       <div style={{ float: 'right', padding: 10 }}>
         <Button positive circular icon='refresh' onClick={() => getClients()} />
         <AddNew />
-        <Button negative circular icon='remove' onClick={() => setOpenConfirmation(true)} />
       </div>
       <Table celled selectable>
         <Table.Header>
@@ -73,11 +64,6 @@ const ClientsTable = () => {
           }
         </Table.Body>
       </Table>
-      <Confirm
-        open={openConfirmation}
-        onCancel={handleCancel}
-        onConfirm={handleConfirm}
-      />
     </>
   )
 }

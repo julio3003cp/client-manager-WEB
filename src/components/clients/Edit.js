@@ -1,29 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import { Divider, Header, Icon, Table, Container, Button, Form } from 'semantic-ui-react'
+import { Divider, Header, Icon, Container, Button, Form, Confirm } from 'semantic-ui-react'
+import AddressesTable from './address/Table';
 
 const ClientSummary = (props) => {
     const params = useParams();
     const history = useNavigate();
     const [client, setClient] = useState({ addresses: [] });
+    const [openConfirmation, setOpenConfirmation] = useState(false);
 
     function getClient() {
-        fetch(`https://localhost/api/clients/${params.clientId}`)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw response;
-            })
-            .then(data => {
-                setClient(data);
-            })
-            .catch(error => {
-                console.error(error);
-            })
-    }
-
-    function addAddress() {
         fetch(`https://localhost/api/clients/${params.clientId}`)
             .then(response => {
                 if (response.ok) {
@@ -46,8 +32,9 @@ const ClientSummary = (props) => {
     function handleChange(e, { name, value }) {
         setClient({ ...client, [name]: value });
     }
-    function handleSubmit() {
-        fetch(`https://localhost/api/clients/${params.clientId}`, {
+
+    function handleUpdateSubmit() {
+        fetch(`https://localhost/api/clients/${client.clientId}`, {
             method: 'PUT',
             body: JSON.stringify(client),
             headers: {
@@ -65,98 +52,81 @@ const ClientSummary = (props) => {
             })
     }
 
+    function handleDeleteCancel() {
+        setOpenConfirmation(false);
+    }
+
+    function handleDeleteConfirm() {
+        fetch(`https://localhost/api/clients/${client.clientId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.info("client deleted");
+                }
+                throw response;
+            })
+            .catch(error => {
+                console.error(error);
+            })
+        setOpenConfirmation(false);
+        history("/home");
+    }
+
     const ClientInfo = () => {
         return (
             <>
                 <Divider horizontal>
                     <Header as='h4'>
-                        <Icon name='tag' />
+                        <Icon name='user' />
                         Client's information
                     </Header>
                 </Divider>
-                <Form onSubmit={() => handleSubmit()}>
+                <Form onSubmit={() => handleUpdateSubmit()}>
+                    <div>
+                        <Button
+                            floated='right'
+                            circular
+                            type='submit'
+                            icon='save'
+                            positive
+                        />
+                        <Button
+                            floated="right"
+                            circular
+                            icon='remove'
+                            negative
+                            onClick={() => setOpenConfirmation(true)}
+                        />
+                    </div>
                     <Form.Group>
                         <Form.Input name="companyId" fluid label="Company's Id" width={4} onChange={handleChange} value={client.companyId} />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Input name="clientId" fluid label="Company's Id" width={4} onChange={handleChange} value={client.clientId} />
+                        <Form.Input name="clientId" fluid label="Internal Id" width={4} onChange={handleChange} value={client.clientId} />
                         <Form.Input name="id" fluid label='Identification' placeholder='A secondary way to identify a client' width={6} onChange={handleChange} value={client.id} />
                     </Form.Group>
                     <Form.Group widths='equal'>
                         <Form.Input name="name" fluid label="Name" onChange={handleChange} value={client.name} />
                         <Form.Input name="lastName" fluid label='LastName' onChange={handleChange} value={client.lastName} />
                     </Form.Group>
-                    <Button
-                        floated='right'
-                        type='submit'
-                        content="Save"
-                        labelPosition='right'
-                        icon='save'
-                        positive
-                    />
                 </Form>
-            </>
-        )
-    }
-
-    const ClientAddresses = () => {
-        return (
-            <>
-                <Divider horizontal style={{ padding: 20 }}>
-                    <Header as='h4'>
-                        <Icon name='bar chart' />
-                        Addresses
-                    </Header>
-                </Divider>
-                <Button primary circular icon='plus' floated='right' style={{ margin: 5 }} />
-                {
-                    client.addresses.map(address => {
-                        return (
-                            <Table definition key={address.id}>
-                                <Table.Body>
-                                    <Table.Row>
-                                        <Table.Cell width={2}>Id</Table.Cell>
-                                        <Table.Cell>{address.id}</Table.Cell>
-                                    </Table.Row>
-                                    <Table.Row>
-                                        <Table.Cell>Type</Table.Cell>
-                                        <Table.Cell>{address.type}</Table.Cell>
-                                    </Table.Row>
-                                    <Table.Row>
-                                        <Table.Cell>Street</Table.Cell>
-                                        <Table.Cell>{address.streetName}</Table.Cell>
-                                    </Table.Row>
-                                    <Table.Row>
-                                        <Table.Cell>Number</Table.Cell>
-                                        <Table.Cell>{address.number}</Table.Cell>
-                                    </Table.Row>
-                                    <Table.Row>
-                                        <Table.Cell>City</Table.Cell>
-                                        <Table.Cell>{address.city}</Table.Cell>
-                                    </Table.Row>
-                                    <Table.Row>
-                                        <Table.Cell>Country</Table.Cell>
-                                        <Table.Cell>{address.country}</Table.Cell>
-                                    </Table.Row>
-                                    <Table.Row>
-                                        <Table.Cell>Comments</Table.Cell>
-                                        <Table.Cell>{address.comments}</Table.Cell>
-                                    </Table.Row>
-                                </Table.Body>
-                            </Table>
-                        );
-                    })
-                }
+                <Confirm
+                    open={openConfirmation}
+                    onCancel={handleDeleteCancel}
+                    onConfirm={handleDeleteConfirm}
+                    content="Are you sure you want to delete this client's information?"
+                />
             </>
         )
     }
 
     return (
         <Container style={{ margin: 20 }}>
-            <Button positive circular icon='home' onClick={() => history('/home')} />
+            <Button color="orange" icon='home' onClick={() => history('/home')} />
             <Header as="h1">Edit Client's Profile{props.clientId}</Header>
             <ClientInfo></ClientInfo>
-            <ClientAddresses></ClientAddresses>
+            <AddressesTable client={client} updateAddressTable={() => getClient()}></AddressesTable>
         </Container>
     );
 }
