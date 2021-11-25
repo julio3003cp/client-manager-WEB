@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'semantic-ui-react'
 
 const AddressForm = (props) => {
@@ -33,23 +33,60 @@ const AddressForm = (props) => {
         setAddress({ ...address, [name]: value });
     }
 
+    useEffect(() => {
+        console.log("Got this address: " + JSON.stringify(props.addressToUpdate));
+    }, []);
     return (
         <>
             <div style={{ padding: 20 }}>
                 <Form onSubmit={() => handleSubmit()}>
                     <Form.Group>
-                        <Form.Input name="type" fluid label="Type" width={4} onChange={handleChange} />
+                        <Form.Input
+                            name="type"
+                            fluid label="Type"
+                            width={4}
+                            onChange={handleChange}
+                            value={props.isUpdate ? props.addressToUpdate.type : ""}
+                        />
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input name="streetName" fluid label="Street Name" onChange={handleChange} />
-                        <Form.Input name="number" fluid label='Number' onChange={handleChange} />
+                        <Form.Input
+                            name="streetName"
+                            fluid
+                            label="Street Name"
+                            onChange={handleChange}
+                            value={props.isUpdate ? props.addressToUpdate.streetName : ""}
+                        />
+                        <Form.Input
+                            name="number"
+                            fluid
+                            label='Number'
+                            onChange={handleChange}
+                            value={props.isUpdate ? props.addressToUpdate.number : ""}
+                        />
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input name="city" fluid label="City" onChange={handleChange} />
-                        <Form.Input name="country" fluid label='Country' onChange={handleChange} />
+                        <Form.Input
+                            name="city"
+                            fluid label="City"
+                            onChange={handleChange}
+                            value={props.isUpdate ? props.addressToUpdate.city ? props.addressToUpdate.city : "" : ""}
+                        />
+                        <Form.Input
+                            name="country"
+                            fluid label='Country'
+                            onChange={handleChange}
+                            value={props.isUpdate ? props.addressToUpdate.country ? props.addressToUpdate.country : "" : ""}
+                        />
                     </Form.Group>
                     <Form.Group widths='equal'>
-                        <Form.Input name="comments" fluid label="Comments" onChange={handleChange} />
+                        <Form.Input
+                            name="comments"
+                            fluid
+                            label="Comments"
+                            onChange={handleChange}
+                            value={props.isUpdate ? props.addressToUpdate.comments ? props.addressToUpdate.comments : "" : ""}
+                        />
                     </Form.Group>
                     <Button
                         floated='right'

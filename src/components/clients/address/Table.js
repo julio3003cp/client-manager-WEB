@@ -5,29 +5,30 @@ import AddNewAddress from './Modal';
 
 const AddressesTable = (props) => {
     const [openConfirmation, setOpenConfirmation] = useState(false);
-    const [selectedAddress, setSelectedAddress] = useState({});
     const [addressId, setAddressId] = useState("0");
 
-    function getAddressId(e) {
-        console.log(e);
-    }
-
     function handleOnClickAddress(e) {
-        setAddressId(e.target.parentElement.firstChild.offsetParent.parentElement.id)
+        console.log("test");
+        setAddressId(e.target.parentElement.firstChild.offsetParent.parentElement.id);
         const invoker = e.target.className;
 
-        console.log("Seleted Address ID: " + addressId);
-        console.log("Invoker: " + invoker);
-
-        if(invoker.includes("negative") || invoker.includes("remove")){
+        if (invoker.includes("negative") || invoker.includes("remove")) {
             setOpenConfirmation(true);
         }
-        //setSelectedAddress({});
+        else {
+            handleUpdateAddress();
+        }
 
     }
 
     function handleDeleteCancel() {
         setOpenConfirmation(false);
+    }
+
+    function handleUpdateAddress() {
+        console.log(JSON.stringify(props.client.addresses));
+        console.log(addressId);
+        console.log(props.client.addresses.find(element => element.id.toString() === addressId));
     }
 
     function deleteAddress() {
@@ -59,9 +60,11 @@ const AddressesTable = (props) => {
             <div style={{ float: 'right', paddingBottom: 5 }}>
                 <AddNewAddress
                     clientId={props.client.clientId}
-                    updateAddressTable={props.updateAddressTable} />
+                    updateAddressTable={props.updateAddressTable}
+                    isUpdate={false}
+                />
             </div>
-            <Table celled selectable>
+            <Table celled>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Id</Table.HeaderCell>
@@ -78,7 +81,7 @@ const AddressesTable = (props) => {
                     {
                         props.client.addresses.map(element => {
                             return (
-                                <Table.Row id={element.id} key={element.id} onClick={(e) => getAddressId(e)}>
+                                <Table.Row id={element.id} key={element.id}>
                                     <Table.Cell>{element.id}</Table.Cell>
                                     <Table.Cell>{element.type}</Table.Cell>
                                     <Table.Cell>{element.streetName}</Table.Cell>
@@ -88,7 +91,15 @@ const AddressesTable = (props) => {
                                     <Table.Cell >{element.comments}</Table.Cell>
                                     <Table.Cell >
                                         <Button icon="remove" negative circular onClick={(e) => handleOnClickAddress(e)} />
-                                        <Button icon="save" positive circular onClick={(e) => console.log("Update")} />
+                                        {/* <Button icon="save" positive circular onClick={(e) => handleOnClickAddress(e)} /> */}
+                                        <AddNewAddress
+                                            clientId={props.client.clientId}
+                                            updateAddressTable={props.updateAddressTable}
+                                            addressToUpdate={props.client.addresses.find(element => element.id.toString() === addressId)}
+                                            //handleOnClickAddress={(e) => handleOnClickAddress(e)}
+                                            handleOnClickAddress = {(e) => handleOnClickAddress(e)}
+                                            isUpdate={true}
+                                        />
                                     </Table.Cell>
                                 </Table.Row>
                             )
@@ -97,11 +108,11 @@ const AddressesTable = (props) => {
                 </Table.Body>
             </Table>
             <Confirm
-                    open={openConfirmation}
-                    onCancel={handleDeleteCancel}
-                    onConfirm={deleteAddress}
-                    content="Are you sure you want to delete this client's address?"
-                />
+                open={openConfirmation}
+                onCancel={handleDeleteCancel}
+                onConfirm={deleteAddress}
+                content="Are you sure you want to delete this client's address?"
+            />
         </>
     )
 }
