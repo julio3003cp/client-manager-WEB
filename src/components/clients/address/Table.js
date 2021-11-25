@@ -1,11 +1,52 @@
 import React from 'react';
-import { Divider, Header, Icon, Table } from 'semantic-ui-react'
+import { useState } from 'react/cjs/react.development';
+import { Button, Confirm, Divider, Header, Icon, Table } from 'semantic-ui-react'
 import AddNewAddress from './Modal';
 
 const AddressesTable = (props) => {
+    const [openConfirmation, setOpenConfirmation] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState({});
+    const [addressId, setAddressId] = useState("0");
+
     function getAddressId(e) {
         console.log(e);
     }
+
+    function handleOnClickAddress(e) {
+        setAddressId(e.target.parentElement.firstChild.offsetParent.parentElement.id)
+        const invoker = e.target.className;
+
+        console.log("Seleted Address ID: " + addressId);
+        console.log("Invoker: " + invoker);
+
+        if(invoker.includes("negative") || invoker.includes("remove")){
+            setOpenConfirmation(true);
+        }
+        //setSelectedAddress({});
+
+    }
+
+    function handleDeleteCancel() {
+        setOpenConfirmation(false);
+    }
+
+    function deleteAddress() {
+        fetch(`https://localhost/api/clients/address/${addressId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.info("address deleted");
+                    props.updateAddressTable();
+                }
+                throw response;
+            })
+            .catch(error => {
+                console.error(error);
+            })
+        setOpenConfirmation(false);
+    }
+
 
     return (
         <>
@@ -16,9 +57,9 @@ const AddressesTable = (props) => {
                 </Header>
             </Divider>
             <div style={{ float: 'right', paddingBottom: 5 }}>
-                <AddNewAddress 
-                clientId={props.client.clientId} 
-                updateAddressTable={props.updateAddressTable} />
+                <AddNewAddress
+                    clientId={props.client.clientId}
+                    updateAddressTable={props.updateAddressTable} />
             </div>
             <Table celled selectable>
                 <Table.Header>
@@ -45,12 +86,22 @@ const AddressesTable = (props) => {
                                     <Table.Cell>{element.city}</Table.Cell>
                                     <Table.Cell>{element.country}</Table.Cell>
                                     <Table.Cell >{element.comments}</Table.Cell>
+                                    <Table.Cell >
+                                        <Button icon="remove" negative circular onClick={(e) => handleOnClickAddress(e)} />
+                                        <Button icon="save" positive circular onClick={(e) => console.log("Update")} />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })
                     }
                 </Table.Body>
             </Table>
+            <Confirm
+                    open={openConfirmation}
+                    onCancel={handleDeleteCancel}
+                    onConfirm={deleteAddress}
+                    content="Are you sure you want to delete this client's address?"
+                />
         </>
     )
 }

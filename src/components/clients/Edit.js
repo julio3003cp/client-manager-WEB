@@ -115,7 +115,7 @@ const ClientSummary = (props) => {
                     open={openConfirmation}
                     onCancel={handleDeleteCancel}
                     onConfirm={handleDeleteConfirm}
-                    content="Are you sure you want to delete this client's information?"
+                    content="Are you sure you want to delete this client's profile?"
                 />
             </>
         )
