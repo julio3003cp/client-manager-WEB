@@ -6,7 +6,10 @@ import AddressesTable from './address/Table';
 const ClientSummary = (props) => {
     const params = useParams();
     const history = useNavigate();
-    const [client, setClient] = useState({ addresses: [] });
+    const [client, setClient] = useState({
+        companyId: "", clientId: "",
+        id: "", name: "", lastName: "", addresses: []
+    });
     const [openConfirmation, setOpenConfirmation] = useState(false);
 
     function getClient() {
@@ -125,7 +128,7 @@ const ClientSummary = (props) => {
         <Container style={{ margin: 20 }}>
             <Button color="orange" icon='home' onClick={() => history('/')} />
             <Header as="h1">Edit Client's Profile{props.clientId}</Header>
-            <ClientInfo></ClientInfo>
+            {ClientInfo()}
             <AddressesTable client={client} updateAddressTable={() => getClient()}></AddressesTable>
         </Container>
     );

@@ -109,13 +109,13 @@ const AddressForm = (props) => {
                             name="city"
                             fluid label="City"
                             onChange={handleChange}
-                            value={address.city}
+                            value={address.city? address.city: ""}
                         />
                         <Form.Input
                             name="country"
                             fluid label='Country'
                             onChange={handleChange}
-                            value={address.country}
+                            value={address.country? address.country: ""}
                         />
                     </Form.Group>
                     <Form.Group widths='equal'>
@@ -124,7 +124,7 @@ const AddressForm = (props) => {
                             fluid
                             label="Comments"
                             onChange={handleChange}
-                            value={address.comments}
+                            value={address.comments? address.comments: ""}
                         />
                     </Form.Group>
                     <Button
