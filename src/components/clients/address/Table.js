@@ -1,11 +1,43 @@
 import React from 'react';
-import { Divider, Header, Icon, Table } from 'semantic-ui-react'
+import { useState } from 'react/cjs/react.development';
+import { Button, Confirm, Divider, Header, Icon, Table } from 'semantic-ui-react'
 import AddNewAddress from './Modal';
 
 const AddressesTable = (props) => {
-    function getAddressId(e) {
-        console.log(e);
+    const [openConfirmation, setOpenConfirmation] = useState(false);
+    const [addressId, setAddressId] = useState("0");
+
+    function handleOnClickAddress(e) {
+        console.log("test");
+        setAddressId(e.target.parentElement.firstChild.offsetParent.parentElement.id);
+        const invoker = e.target.className;
+
+        if (invoker.includes("negative") || invoker.includes("remove")) {
+            setOpenConfirmation(true);
+        }
     }
+
+    function handleDeleteCancel() {
+        setOpenConfirmation(false);
+    }
+
+    function deleteAddress() {
+        fetch(`https://localhost/api/clients/address/${addressId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.info("address deleted");
+                    props.updateAddressTable();
+                }
+                throw response;
+            })
+            .catch(error => {
+                console.error(error);
+            })
+        setOpenConfirmation(false);
+    }
+
 
     return (
         <>
@@ -16,11 +48,14 @@ const AddressesTable = (props) => {
                 </Header>
             </Divider>
             <div style={{ float: 'right', paddingBottom: 5 }}>
-                <AddNewAddress 
-                clientId={props.client.clientId} 
-                updateAddressTable={props.updateAddressTable} />
+                <AddNewAddress
+                    clientId={props.client.clientId}
+                    updateAddressTable={props.updateAddressTable}
+                    isUpdate={false}
+                    handleOnClickAddress={(e) => handleOnClickAddress(e)}
+                />
             </div>
-            <Table celled selectable>
+            <Table celled>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Id</Table.HeaderCell>
@@ -37,7 +72,7 @@ const AddressesTable = (props) => {
                     {
                         props.client.addresses.map(element => {
                             return (
-                                <Table.Row id={element.id} key={element.id} onClick={(e) => getAddressId(e)}>
+                                <Table.Row id={element.id} key={element.id}>
                                     <Table.Cell>{element.id}</Table.Cell>
                                     <Table.Cell>{element.type}</Table.Cell>
                                     <Table.Cell>{element.streetName}</Table.Cell>
@@ -45,12 +80,28 @@ const AddressesTable = (props) => {
                                     <Table.Cell>{element.city}</Table.Cell>
                                     <Table.Cell>{element.country}</Table.Cell>
                                     <Table.Cell >{element.comments}</Table.Cell>
+                                    <Table.Cell >
+                                        <Button icon="remove" negative circular onClick={(e) => handleOnClickAddress(e)} />
+                                        <AddNewAddress
+                                            clientId={props.client.clientId}
+                                            updateAddressTable={props.updateAddressTable}
+                                            addressToUpdate={props.client.addresses.find(element => element.id.toString() === addressId)}
+                                            handleOnClickAddress={(e) => handleOnClickAddress(e)}
+                                            isUpdate={true}
+                                        />
+                                    </Table.Cell>
                                 </Table.Row>
                             )
                         })
                     }
                 </Table.Body>
             </Table>
+            <Confirm
+                open={openConfirmation}
+                onCancel={handleDeleteCancel}
+                onConfirm={deleteAddress}
+                content="Are you sure you want to delete this client's address?"
+            />
         </>
     )
 }
