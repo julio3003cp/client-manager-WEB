@@ -21,6 +21,7 @@ const ClientForm = (props) => {
         })
             .then(response => {
                 if (response.ok) {
+                    props.refreshTable();
                     props.closeModal(true);
                 }
                 throw response;
